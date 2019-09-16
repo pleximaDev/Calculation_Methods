@@ -87,29 +87,64 @@ disp(A)
 B = Q * R
 %____________________________________________%
 
-[L,U] = my_lu(A)
 
 
-function [L,U] = my_lu(x)
-[m, n] = size(x);
-L = zeros(m, n);
-U = zeros(m, n);
-sumL = 0;
-sumU = 0;
-for i = 1 : 1 : n
-    for j = i : 1 : n
-        for k = 1 : 1 : i-1
-            sumU = sumU + L(i, k) * U(k, j);
-            sumL = sumL + L(j, k) * U(k, i);
+
+
+[L,U] = my_lu(A, "Doolittle")
+[L,U] = lu(A)
+
+
+function [L,U] = my_lu(x, method)
+switch method
+    case "Doolittle"
+        [m, n] = size(x);
+        L = zeros(m, n);
+        U = zeros(m, n);
+        sumL = 0;
+        sumU = 0;
+        for i = 1 : 1 : n
+            for j = i : 1 : n
+                for k = 1 : 1 : i-1
+                    sumU = sumU + L(i, k) * U(k, j);
+                    sumL = sumL + L(j, k) * U(k, i);
+                end
+                U(i,j) = x(i,j) - sumU;
+                L(i,i) = 1;
+                if j ~= n
+                    j = j + 1;
+                end
+                L(j,i) = (1/U(i,i)) * (x(j, i) - sumL);
+                j = j - 1;
+            end    
         end
-        U(i,j) = x(i,j) - sumU;
-        L(i,i) = 1;
-        if j>n
-            break
+        
+    case "Crout"
+        [m, n] = size(x);
+        L = zeros(m, n);
+        U = zeros(m, n);
+        sumL = 0;
+        sumU = 0;
+        for i = 1 : 1 : n
+            for j = i : 1 : n
+                for k = 1 : 1 : i-1
+                    sumL = sumL + L(j, k) * U(k, i);
+                    sumU = sumU + L(i, k) * U(k, j);
+                end
+                L(j,i) = x(j,i) - sumU;
+                U(i,i) = 1;
+                if j ~= n
+                    j = j + 1;
+                end
+                U(i,j) = (1/L(i,i)) * (x(i, j) - sumL);
+                j = j - 1;
+            end    
         end
-        L(j+1,i) = (1/U(i,i)) * (x(j+1, i) - sumL)
-    end    
+        
+    otherwise 
+        fprintf("Error");
 end
+
 end
 
 
