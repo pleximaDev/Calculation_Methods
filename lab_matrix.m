@@ -26,55 +26,52 @@ c=b' * b;
 c=b' * b;
 %bxb
 
-% A поэлементно на A
+% element-wise multiplication
 c=A .* A;
-% поэлементное деление A/A
+% element-wise division A/A
 c= A ./ A;
-% поэлементное возведение в куб матрицы A
+% bitwise matrix cube A
 c= A.^3;
-% поэлементное умножение b b
+% element-wise multiplication b b
 c=b .* b;
-% A^?1(как с использванием I, так и через операцию возведения в степень)
+% A^-1(Using I, and using pow)
 c=A^(-1);
 c=eye(4)/A;
 %A b
 c=A*b;
-% c=b * A% низя так
-% удалить из матрицы A вторую строчку и второй столбец, а из вектора b третий элемент
+% delete A's 2nd line and 2nd column, and b's 3rd element
 A(2, :)=[];
 A(:, 2)=[]
 b(3)=[]
 B=A;
-% задать матрицу C элементы которой равны единице, если соответствующий
-% элемент матрицы A положителен, и равны -5 в противном случае (использовать
-% механизм логической индексации)
+% Matrix with ones if corresponding element is positive and -5 otherwise (using logical indexing)
 A(A>0)=1;
 A(A<0)=-5;
 C=A
 A=B;
-% заменить все отрицательные элементы матрицы C нулевыми значениями
+% Making all C<0 elements equal zero
 C(C<0)=0
 
 %2.2
-% b · b (используя dot())
+% b · b (using dot())
 c=dot(b, b);
-% b x b (используя cross())
+% b x b (using cross())
 c=cross(b, b);
-% ранг матрицы A (используя rank())
+% A's rank (using rank())
 c=rank(A);
-% минимальное значение матрицы A (используя min())
-c=min(A);                                      %доделать (вывести только одно значение)
-c=min(c); %вроде, доделал %лютый костыль)))
-% максимальное значение матрицы A (используя max())
+% min value of A (using min())
+c=min(A);                                      
+c=min(c); %only one value
+% max A's value (using max())
 c=max(A);
 c=max(c);
-% собственные числа и собственные вектора матрицы A (используя eig())
-[V,D] = eig(A); % в D по диагонали рас-жены собст. числа;в V столбцы яв-ся собст. век-ми 
+% eigenvectors and eigevalues of A (using eig())
+[V,D] = eig(A); % D's diagonal consists of eigenvalues; V's columns consists of eigenvectors 
 
-% сингулярные числа и сингулярные вектора матрицы A (используя svds())
-[U,S,V] = svds(A); %U - левые синг вект-ры, V правые синг вект, S синг чисда
+% Singular values and vectors of A (using svds())
+[U,S,V] = svds(A); % U - left-singular vectors, V - right-singular vectors, S - Unitary matrix with right-singular vectors in columns
 
-% матричную экспоненту A (как с использованием expm(), так и с помощью цикла);
+% A's matrix exponent (using expm(), and using cycle);
 c=expm(A);
 c=0;
 for k=0:1:10
