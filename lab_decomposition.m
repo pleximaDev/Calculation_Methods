@@ -90,9 +90,26 @@ B = Q * R
 
 
 
-
+fprintf("_____________________")
 [L,U] = my_lu(A, "Doolittle")
+A
+L*U
+
+
+fprintf("_____________________")
 [L,U] = lu(A)
+fprintf("_____________________")
+[L,U] = my_lu(A, "Crout")
+fprintf("_____________________")
+
+
+
+
+
+[L] = my_ll(A, "Cholesky_Banachiewicz")
+
+
+
 
 
 function [L,U] = my_lu(x, method)
@@ -111,11 +128,11 @@ switch method
                 end
                 U(i,j) = x(i,j) - sumU;
                 L(i,i) = 1;
-                if j ~= n
-                    j = j + 1;
-                end
+%                 if j ~= n
+%                     j = j + 1;
+%                 end
                 L(j,i) = (1/U(i,i)) * (x(j, i) - sumL);
-                j = j - 1;
+%                 j = j - 1;
             end    
         end
         
@@ -142,10 +159,42 @@ switch method
         end
         
     otherwise 
-        fprintf("Error");
+        fprintf("Error occured while entering method's name.");
 end
 
 end
+
+function [L, p] = my_ll(x, method)
+switch method
+    case "Cholesky_Banachiewicz"
+        p = true;
+        if all(eig(x) <= 1e-9)
+            p = false;
+        end
+        [m, n] = size(x);
+        L = zeros(m, n);
+        sumij = 0;
+        sumii = 0;
+        L(1, 1) = (x(1, 1))^(1/2);
+        for i = 2 : 1 : n
+            for j = i : 1 : n
+                for k = 1 : 1 : j-1
+                    sumij = sumij + L(i,k)*L(j,k);
+                end
+                for k = 1 : 1 : i-1
+                    sumii = sumii + L(i,k)*L(j,k);
+                end
+                L(i,j) = (1/L(j,j))*(x(i,j) - sumij);
+                L(i,i) = sqrt(x(i,i) - sumii);
+            end
+        end
+        
+    otherwise
+        fprintf("Error occured while entering method's name.")
+end
+
+end
+
 
 
 
