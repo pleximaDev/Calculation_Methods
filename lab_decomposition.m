@@ -29,77 +29,77 @@ Ans = Q*Q_inv;
 (Ans < 0.8);
 Ans(Ans < 0.8) = 0;
 
-disp(A)
-B = Q * L * Q^(-1)
+disp(A);
+B = Q * L * Q^(-1);
 %____________________________________________%
 
 
 %____________________________________________%
 % Singular value decomposition
-[U,S,V] = svd(A) 
+[U,S,V] = svd(A);
 % U - Unitary matrix with left-singular vectors;
 % S - rectangular diagonal matrix with singular values;
 % V - Unitary matrix with right-singular vectors in columns;
-disp(A)
-B = U * S * conj(V)'
+disp(A);
+B = U * S * conj(V)';
 %____________________________________________%
 
 
 %____________________________________________%
 % LU decomposition
-[L,U] = lu(A)
-disp(A)
-B = L * U
+[L,U] = lu(A);
+disp(A);
+B = L * U;
 %____________________________________________%
 
 
 %____________________________________________%
 % LUP decomposition
-[L,U,P] = lu(A)
-disp(A)
-B = P' * L * U
+[L,U,P] = lu(A);
+disp(A);
+B = P' * L * U;
 %____________________________________________%
 
 
 %____________________________________________%
 % LL decomposition
-L = chol(A,'lower')
-U = chol(A, 'upper')
-disp(A)
-B = L * U
-B = L * conj(L)'
-B = conj(U)' * U
+L = chol(A,'lower');
+U = chol(A, 'upper');
+disp(A);
+B = L * U;
+B = L * conj(L)';
+B = conj(U)' * U;
 %____________________________________________%
 
 
 %____________________________________________%
 % LDL decomposition
-[L,D] = ldl(A)
-disp(A)
-B = L * D * conj(L)'
+[L,D] = ldl(A);
+disp(A);
+B = L * D * conj(L)';
 %____________________________________________%
 
 
 %____________________________________________%
 % QR decomposition
-[Q,R] = qr(A)
-disp(A)
-B = Q * R
+[Q,R] = qr(A);
+disp(A);
+B = Q * R;
 %____________________________________________%
 
 
 
 
 fprintf("_____________________")
-[L,U] = my_lu(A, "Doolittle")
-A
-L*U
+[L,U] = my_lu(A, "Doolittle");
+A;
+L*U;
 
 
 fprintf("_____________________")
-[L,U] = lu(A)
+[L,U] = lu(A);
 fprintf("_____________________")
-[L,U] = my_lu(A, "Crout")
+[L,U] = my_lu(A, "Crout");
 fprintf("_____________________")
 
 
@@ -107,8 +107,8 @@ fprintf("_____________________")
 
 
 
-[my, p] = my_chol(A, "Cholesky_Banachiewicz")
-[standart] = chol(A, 'lower')
+[my, p] = my_chol(A, "Cholesky_Banachiewicz");
+[standart] = chol(A, 'lower');
 
 
 
