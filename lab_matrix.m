@@ -124,7 +124,7 @@ sm=sm^(1/2);
         
 
 
-% след матрицы A (как с использованием trace(), так и с помощью цикла);
+% A' matrix trace (using trace(), using cycle);
 c=trace(A);
 c=sum(diag(A));
 c=0;
@@ -132,7 +132,7 @@ for i = 1 : 1 : 3
    c=c+A(i, i);
 end
 c;
-% диагональную матрицу D, состоящую из собственным значений матрицы A (используя diag());
+% diagonal D, consisting of A's eigenvalues (using diag());
 D=eig(A);
 D=diag(D);
 % верхнюю и нижнюю треугольные части матрицы A (используя tril() и triu());
