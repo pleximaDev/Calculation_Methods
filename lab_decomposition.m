@@ -1,5 +1,5 @@
 clc
-clear all variables;
+clear variables;
 
 % Init
 A = randn(4, 4);
@@ -106,10 +106,15 @@ fprintf("_____________________")
 
 
 
-[L] = my_ll(A, "Cholesky_Banachiewicz")
+
+[my, p] = my_chol(A, "Cholesky_Banachiewicz")
+[standart] = chol(A, 'lower')
 
 
 
+
+[Q,R] = my_qr(A)
+[Q,R] = qr(A)
 
 
 function [L,U] = my_lu(x, method)
@@ -164,7 +169,7 @@ end
 
 end
 
-function [L, p] = my_ll(x, method)
+function [L, p] = my_chol(x, method)
 switch method
     case "Cholesky_Banachiewicz"
         p = true;
@@ -175,22 +180,50 @@ switch method
         L = zeros(m, n);
         sumij = 0;
         sumii = 0;
+        j = 1;
+        k = 1;
         L(1, 1) = (x(1, 1))^(1/2);
-        for i = 2 : 1 : n
-            for j = i : 1 : n
-                for k = 1 : 1 : j-1
-                    sumij = sumij + L(i,k)*L(j,k);
-                end
-                for k = 1 : 1 : i-1
-                    sumii = sumii + L(i,k)*L(j,k);
-                end
-                L(i,j) = (1/L(j,j))*(x(i,j) - sumij);
-                L(i,i) = sqrt(x(i,i) - sumii);
+        for i = 2 : 1 : m
+            j = 1;
+            while j < i
+               while k < j
+                   sumij = sumij + L(i, k) * L(j, k);
+                   j
+                   k = k + 1
+               end
+               k = 1;
+               while k < j
+                   sumii = sumii + L(i,k) * L(i,k);
+                   k = k + 1;
+               end
+               k = 1;
+               
+               L(i,j) = (1/L(j,j))*(x(i,j) - sumij);
+               L(i,i) = (x(i,i) - sumii)^(1/2);
+               sumij = 0;
+               sumii = 0;
+               j = j + 1;
             end
         end
-        
     otherwise
         fprintf("Error occured while entering method's name.")
+end
+end
+
+function [Q,R] = my_qr(x)
+[m,n] = size(x);
+Q = zeros(m,n);
+R = zeros(m,n);
+sum_proj = zeros(m,1);
+
+
+for k = 1 : 1 : m
+    for j = 1 : 1 : k-1
+        sum_proj = sum_proj + ((x(:,k) .* Q(:,j))./(Q(:,j).*Q(:,j))).*Q(:,j)
+    end
+    Q(:,k) = x(:, k) - sum_proj;
+    Q(:,k) = Q(:,k)./norm(Q(:,k));
+    sum_proj = 0;
 end
 
 end
