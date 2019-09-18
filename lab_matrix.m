@@ -71,14 +71,14 @@ c=max(c);
 % Singular values and vectors of A (using svds())
 [U,S,V] = svds(A); % U - left-singular vectors, V - right-singular vectors, S - Unitary matrix with right-singular vectors in columns
 
-% A's matrix exponent (using expm(), and using cycle);
+% A's matrix exponent (using expm(), and using loop);
 c=expm(A);
 c=0;
 for k=0:1:10
     c=c+(1/factorial(k))*A^k;
 end
 c;
-%операторные нормы ||A||1 и ||Ak||inf (как с использованием norm(),так и с помощью цикла);
+%operator norms ||A||1 and ||Ak||inf (using norm(), using loop);
 c=norm(A , 1);
 max=0;
 for j = 1 : 1 : 3
@@ -105,9 +105,7 @@ for i = 1 : 1 : 3
     end
 end
 max;
-% норму Фробениуса kAkF (как с использованием norm(), так и с помощью
-%цикла, так и без использования цикла - через векторно-матричные операции
-%и функцию sum());
+% Frobenius norm (using norm(), using loop
 c = norm(A,'fro');
 
 c=A.^2;
@@ -124,7 +122,7 @@ sm=sm^(1/2);
         
 
 
-% A' matrix trace (using trace(), using cycle);
+% A's matrix trace (using trace(), using loop);
 c=trace(A);
 c=sum(diag(A));
 c=0;
@@ -135,20 +133,20 @@ c;
 % diagonal D, consisting of A's eigenvalues (using diag());
 D=eig(A);
 D=diag(D);
-% верхнюю и нижнюю треугольные части матрицы A (используя tril() и triu());
+% up and down triangular parts of A (using tril() triu());
 c=tril(A);
 c=triu(A);
-% определить количество ненулевых элементов в матрице C (используя nnz()).
+% determine nonzero values of C (используя nnz()).
 c=nnz(C);
 
 
 %3.1
-% спектральное разложение (используя eig())
+% Eigendecomposition (using eig())
 A;
 [V,D] = eig(A);
 A = V * D * V^(-1);
 
-% сигнулярное разложение (используя svd())
+% Singular Value Decomposition (using svd())
 [U,S,V] = svds(A); %U - левые синг вект-ры, V правые синг вект, S синг числа
 A;
 A=U * S * conj(V)';
