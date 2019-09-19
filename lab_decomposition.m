@@ -29,77 +29,77 @@ Ans = Q*Q_inv;
 (Ans < 0.8);
 Ans(Ans < 0.8) = 0;
 
-disp(A);
-B = Q * L * Q^(-1);
+disp(A)
+B = Q * L * Q^(-1)
 %____________________________________________%
 
 
 %____________________________________________%
 % Singular value decomposition
-[U,S,V] = svd(A);
+[U,S,V] = svd(A) 
 % U - Unitary matrix with left-singular vectors;
 % S - rectangular diagonal matrix with singular values;
 % V - Unitary matrix with right-singular vectors in columns;
-disp(A);
-B = U * S * conj(V)';
+disp(A)
+B = U * S * conj(V)'
 %____________________________________________%
 
 
 %____________________________________________%
 % LU decomposition
-[L,U] = lu(A);
-disp(A);
-B = L * U;
+[L,U] = lu(A)
+disp(A)
+B = L * U
 %____________________________________________%
 
 
 %____________________________________________%
 % LUP decomposition
-[L,U,P] = lu(A);
-disp(A);
-B = P' * L * U;
+[L,U,P] = lu(A)
+disp(A)
+B = P' * L * U
 %____________________________________________%
 
 
 %____________________________________________%
 % LL decomposition
-L = chol(A,'lower');
-U = chol(A, 'upper');
-disp(A);
-B = L * U;
-B = L * conj(L)';
-B = conj(U)' * U;
+L = chol(A,'lower')
+U = chol(A, 'upper')
+disp(A)
+B = L * U
+B = L * conj(L)'
+B = conj(U)' * U
 %____________________________________________%
 
 
 %____________________________________________%
 % LDL decomposition
-[L,D] = ldl(A);
-disp(A);
-B = L * D * conj(L)';
+[L,D] = ldl(A)
+disp(A)
+B = L * D * conj(L)'
 %____________________________________________%
 
 
 %____________________________________________%
 % QR decomposition
-[Q,R] = qr(A);
-disp(A);
-B = Q * R;
+[Q,R] = qr(A)
+disp(A)
+B = Q * R
 %____________________________________________%
 
 
 
 
 fprintf("_____________________")
-[L,U] = my_lu(A, "Doolittle");
-A;
-L*U;
+[L,U] = my_lu(A, "Doolittle")
+A
+L*U
 
 
 fprintf("_____________________")
-[L,U] = lu(A);
+[L,U] = lu(A)
 fprintf("_____________________")
-[L,U] = my_lu(A, "Crout");
+[L,U] = my_lu(A, "Crout")
 fprintf("_____________________")
 
 
@@ -107,14 +107,14 @@ fprintf("_____________________")
 
 
 
-[my, p] = my_chol(A, "Cholesky_Banachiewicz");
-[standart] = chol(A, 'lower');
+[my, p] = my_chol(A, "Cholesky_Banachiewicz")
+[standard] = chol(A, 'lower')
 
 
 
 
-[Q,R] = my_qr(A)
-[Q,R] = qr(A)
+[Q,R] = qr(A);
+[Q, R] = my_qr(A);
 
 
 function [L,U] = my_lu(x, method)
@@ -175,6 +175,8 @@ switch method
         p = true;
         if all(eig(x) <= 1e-9)
             p = false;
+            L = zeros(m, n);
+            return
         end
         [m, n] = size(x);
         L = zeros(m, n);
@@ -185,7 +187,7 @@ switch method
         L(1, 1) = (x(1, 1))^(1/2);
         for i = 2 : 1 : m
             j = 1;
-            while j < i
+            while j <= i
                while k < j
                    sumij = sumij + L(i, k) * L(j, k);
                    j
@@ -216,16 +218,20 @@ Q = zeros(m,n);
 R = zeros(m,n);
 sum_proj = zeros(m,1);
 
-
 for k = 1 : 1 : m
     for j = 1 : 1 : k-1
-        sum_proj = sum_proj + ((x(:,k) .* Q(:,j))./(Q(:,j).*Q(:,j))).*Q(:,j)
+        sum_proj = sum_proj + ((x(:,k)' * Q(:,j))/(Q(:,j)'*Q(:,j))).*Q(:,j);
     end
     Q(:,k) = x(:, k) - sum_proj;
-    Q(:,k) = Q(:,k)./norm(Q(:,k));
+    Q(:,k) = -Q(:,k)/norm(Q(:,k));
     sum_proj = 0;
 end
-
+R = Q' * x;
+%___________Unnecessary___________%
+zero_logic = triu(ones(m,n));
+logic = (zero_logic == 0);
+R(logic) = 0;
+%___________Unnecessary___________%
 end
 
 
