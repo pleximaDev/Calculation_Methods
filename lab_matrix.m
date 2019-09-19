@@ -151,7 +151,7 @@ A = V * D * V^(-1);
 A;
 A=U * S * conj(V)';
 
-% LU-разложение (используя lu())
+% LU decomposition (using lu())
 
 %L=tril(A);
 %U=triu(A);
@@ -159,24 +159,24 @@ A=U * S * conj(V)';
 A;
 N = L * U;
 
-% LL-разложение (используя chol())
+% LL decomposition (using chol())
 A;
 L = chol(A,'lower');
 R = chol(A,'upper');
 A= L * R;
  
-% LDL-разложение (используя ldl())
+% LDL decomposition (using ldl())
 A;
 [L,D] = ldl(A);
 A = L * D * conj(L)';
 
-% разложение Шура (используя schur())
+% Schur decomposition (using schur())
 A;
 [U,T] = schur(A);
 A = U * T * conj(U)';
     
 
-% QR-разложение (используя qr())
+% QR decomposition (using qr())
 A;
 [Q,R] = qr(A);
 A =  Q * R;
@@ -402,7 +402,7 @@ end
 
 
 
-%rabochaya napolovinu
+% half-working
 %{
 function L=my_chol(x)
 L=zeros(3, 3);
