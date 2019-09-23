@@ -102,12 +102,8 @@ L*U
 fprintf("_____________________\n")
 
 
-
-
 [my, p] = my_chol(A, "Cholesky_Banachiewicz")
 [standard] = chol(A, 'lower')
-
-
 
 
 [Q,R] = qr(A);
