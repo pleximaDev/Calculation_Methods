@@ -89,20 +89,17 @@ B = Q * R
 
 
 
-
+[L,U] = lu(A)
 fprintf("_____________________")
 [L,U] = my_lu(A, "Doolittle")
 A
 L*U
 
-
-fprintf("_____________________")
-[L,U] = lu(A)
-fprintf("_____________________")
+fprintf("_____________________\n")
 [L,U] = my_lu(A, "Crout")
-fprintf("_____________________")
-
-
+A
+L*U
+fprintf("_____________________\n")
 
 
 
@@ -132,12 +129,14 @@ switch method
                     sumL = sumL + L(j, k) * U(k, i);
                 end
                 U(i,j) = x(i,j) - sumU;
+                sumU = 0;
                 L(i,i) = 1;
-%                 if j ~= n
-%                     j = j + 1;
-%                 end
+                if j ~= n
+                    j = j + 1;
+                end
                 L(j,i) = (1/U(i,i)) * (x(j, i) - sumL);
-%                 j = j - 1;
+                sumL = 0;
+                j = j - 1;
             end    
         end
         
@@ -154,11 +153,13 @@ switch method
                     sumU = sumU + L(i, k) * U(k, j);
                 end
                 L(j,i) = x(j,i) - sumU;
+                sumU = 0;
                 U(i,i) = 1;
                 if j ~= n
                     j = j + 1;
                 end
                 U(i,j) = (1/L(i,i)) * (x(i, j) - sumL);
+                sumL = 0;
                 j = j - 1;
             end    
         end
@@ -166,7 +167,6 @@ switch method
     otherwise 
         fprintf("Error occured while entering method's name.");
 end
-
 end
 
 function [L, p] = my_chol(x, method)
@@ -190,8 +190,7 @@ switch method
             while j <= i
                while k < j
                    sumij = sumij + L(i, k) * L(j, k);
-                   j
-                   k = k + 1
+                   k = k + 1;
                end
                k = 1;
                while k < j
