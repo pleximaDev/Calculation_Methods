@@ -102,8 +102,11 @@ L*U
 fprintf("_____________________\n")
 
 
+
 [my, p] = my_chol(A, "Cholesky_Banachiewicz")
 [standard] = chol(A, 'lower')
+
+
 
 
 [Q,R] = qr(A);
@@ -207,43 +210,75 @@ switch method
 end
 end
 
-function [Q,R] = my_qr(x)
-[m,n] = size(x);
-Q = zeros(m,n);
-R = zeros(m,n);
-sum_proj = zeros(m,1);
+function [Q,R] = my_qr(x, method)
+switch method
+    case "Classical Gram–Schmidt"
+        [m,n] = size(x);
+        Q = zeros(m,n);
+        sum_proj = zeros(m,1);
 
-for k = 1 : 1 : m
-    for j = 1 : 1 : k-1
-        sum_proj = sum_proj + ((x(:,k)' * Q(:,j))/(Q(:,j)'*Q(:,j))).*Q(:,j);
-    end
-    Q(:,k) = x(:, k) - sum_proj;
-    Q(:,k) = -Q(:,k)/norm(Q(:,k));
-    sum_proj = 0;
+        for k = 1 : 1 : m
+            for j = 1 : 1 : k-1
+                sum_proj = sum_proj + ((x(:,k)' * Q(:,j))/(Q(:,j)'*Q(:,j))).*Q(:,j);
+            end
+            Q(:,k) = x(:, k) - sum_proj;
+            Q(:,k) = -Q(:,k)/norm(Q(:,k));
+            sum_proj = 0;
+        end
+        R = Q' * x;
+        %___________Unnecessary___________%
+        zero_logic = triu(ones(m,n));
+        logic = (zero_logic == 0);
+        R(logic) = 0;
+        %___________Unnecessary___________%
+        
+    case "modified Gram–Schmidt"
+        [m,n] = size(x);
+        Q = zeros(m, n);
+        b = zeros(m, n);
+
+        b(:, 1) = x(:, 1)/norm(x(:, 1));
+        for j = 2 : 1 : m
+            b_prev = x(:, j);
+            for i = 2 : 1 : j-1
+                proj = ((b_prev' * b(:, i - 1))/(b(:, i - 1)'*b(:, i - 1))).*b(:, i - 1);
+                b_curr = b_prev - proj;
+                b_prev = b_curr;
+            end
+        % % % %     
+        b(:, j) = b_prev - ((b_prev' * b(:, j - 1))/(b(:, j - 1)'*b(:, j - 1))).*b(:, j - 1);
+        b(:, j) = b(:, j)/norm(b(:, j));
+        end
+        Q = -b;
+        R = Q' * x;
+        %___________Unnecessary___________%
+        zero_logic = triu(ones(m,n));
+        logic = (zero_logic == 0);
+        R(logic) = 0;
+        %___________Unnecessary___________%
+
+    otherwise 
+        fprintf("Error occured while entering method's name.");
 end
-R = Q' * x;
-%___________Unnecessary___________%
-zero_logic = triu(ones(m,n));
-logic = (zero_logic == 0);
-R(logic) = 0;
-%___________Unnecessary___________%
 end
 
-function [Q,R] = my_modified_qr(x)
-[m,n] = size(x);
-Q = zeros(m,n);
-R = zeros(m,n);
+%previous tries
 
-Q(:,1) = x(:, 1)/norm(x(:, 1));
-for k = 2 : 1 : m
-    Q(:,k - 1)
-    b_k = Q(:,k - 1)/norm(Q(:,k - 1))
-    proj = ((Q(:,k - 1)' * b_k)/(b_k'*b_k)).*b_k
-    Q(:,k) = Q(:, k - 1) - proj;
-    break
-    Q(:,k) = -Q(:,k)/norm(Q(:,k));
-end
-end
+% function [Q,R] = my_modified_qr(x)
+% [m,n] = size(x);
+% Q = zeros(m,n);
+% R = zeros(m,n);
+% 
+% Q(:,1) = x(:, 1)/norm(x(:, 1));
+% for k = 2 : 1 : m
+%     Q(:,k - 1)
+%     b_k = Q(:,k - 1)/norm(Q(:,k - 1))
+%     proj = ((Q(:,k - 1)' * b_k)/(b_k'*b_k)).*b_k
+%     Q(:,k) = Q(:, k - 1) - proj;
+%     break
+%     Q(:,k) = -Q(:,k)/norm(Q(:,k));
+% end
+% end
 
 
 
