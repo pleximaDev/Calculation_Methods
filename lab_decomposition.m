@@ -109,8 +109,8 @@ fprintf("_____________________\n")
 
 
 
-[Q,R] = qr(A);
-[Q, R] = my_qr(A);
+[Q_std, R_std] = qr(A)
+[Q_House, R] = my_qr(A, "Householder")
 
 
 function [L,U] = my_lu(x, method)
@@ -212,7 +212,7 @@ end
 
 function [Q,R] = my_qr(x, method)
 switch method
-    case "Classical Gram–Schmidt"
+    case "Classical Gram?Schmidt"
         [m,n] = size(x);
         Q = zeros(m,n);
         sum_proj = zeros(m,1);
@@ -232,7 +232,7 @@ switch method
         R(logic) = 0;
         %___________Unnecessary___________%
         
-    case "modified Gram–Schmidt"
+    case "modified Gram?Schmidt"
         [m,n] = size(x);
         Q = zeros(m, n);
         b = zeros(m, n);
@@ -256,7 +256,56 @@ switch method
         logic = (zero_logic == 0);
         R(logic) = 0;
         %___________Unnecessary___________%
+    case "Householder"
+        A = x;
+        [m, n] = size(A);
+        Q = eye(m, n);
+        e = zeros(m, 1);
+        
 
+        for k = 1 : 1 : n-1
+            e(k, 1) = 1;
+            x = A(:, k);
+            for i = 1 : 1 : k-1
+                x(i, 1) = 0;
+            end
+            u = x - norm(x) * e;
+            P = eye(m, n) - 2 * (u * u')/(norm(u))^2;
+            Q = Q * P;
+            A = P * A;
+            R = A;
+            e(e>1e-12) = 0;
+        end
+        % <changing signs>
+        R = -R;
+        Q = -Q;
+        % <\changing signs>
+        %___________Unnecessary___________%
+        zero_logic = triu(ones(m,n));
+        logic = (zero_logic == 0);
+        R(logic) = 0;
+        %___________Unnecessary___________%
+        
+    case "Givens"
+        [m,n] = size(x);
+        A = x;
+        Q = eye(m, n);
+        R = A;
+        G = eye(m, n);
+        for i = 1 : 1 : n - 1
+            for j = i + 1 : 1 : n
+                fprintf("ij(%d, %d)\n", i, j);
+                fprintf("ji(%d, %d)\n", j, i);
+                G(i,i) = A(i, i)/sqrt(A(i, i)^2 - A(j, i)^2);
+                G(j,j) = G(i,i);
+                G(i, j) = A(j, i)/sqrt(A(i, i)^2 - A(j, i)^2);
+                G(j, i) = -A(j, i)/sqrt(A(i, i)^2 - A(j, i)^2);
+
+                Q = Q * G';
+                A = G * R;
+                R = A;
+            end
+        end
     otherwise 
         fprintf("Error occured while entering method's name.");
 end
