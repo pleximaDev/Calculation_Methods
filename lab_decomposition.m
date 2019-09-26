@@ -110,7 +110,10 @@ fprintf("_____________________\n")
 
 
 [Q_std, R_std] = qr(A)
-[Q_House, R] = my_qr(A, "Householder")
+[Q_classical, R] = my_qr(A, "Classical Gram_Schmidt")
+[Q_modified, R] = my_qr(A, "Modified Gram_Schmidt")
+[Q_Householder, R] = my_qr(A, "Householder")
+[Q_Givens, R] = my_qr(A, "Givens")
 
 
 function [L,U] = my_lu(x, method)
@@ -212,7 +215,7 @@ end
 
 function [Q,R] = my_qr(x, method)
 switch method
-    case "Classical Gram?Schmidt"
+    case "Classical Gram_Schmidt"
         [m,n] = size(x);
         Q = zeros(m,n);
         sum_proj = zeros(m,1);
@@ -232,7 +235,7 @@ switch method
         R(logic) = 0;
         %___________Unnecessary___________%
         
-    case "modified Gram?Schmidt"
+    case "Modified Gram_Schmidt"
         [m,n] = size(x);
         Q = zeros(m, n);
         b = zeros(m, n);
