@@ -260,6 +260,7 @@ switch method
         R(logic) = 0;
         %___________Unnecessary___________%
     case "Householder"
+        % Reflections
         A = x;
         [m, n] = size(A);
         Q = eye(m, n);
@@ -290,25 +291,30 @@ switch method
         %___________Unnecessary___________%
         
     case "Givens"
+        % Rotations
         [m,n] = size(x);
         A = x;
         Q = eye(m, n);
         R = A;
-        G = eye(m, n);
+        G = eye(n, n);
         for i = 1 : 1 : n - 1
             for j = i + 1 : 1 : n
+                G = eye(n, n);
                 fprintf("ij(%d, %d)\n", i, j);
-                fprintf("ji(%d, %d)\n", j, i);
-                G(i,i) = A(i, i)/sqrt(A(i, i)^2 - A(j, i)^2);
-                G(j,j) = G(i,i);
-                G(i, j) = A(j, i)/sqrt(A(i, i)^2 - A(j, i)^2);
-                G(j, i) = -A(j, i)/sqrt(A(i, i)^2 - A(j, i)^2);
-
+                G(i, i) = A(i, i)/sqrt(A(i, i)^2 + A(j, i)^2);
+                G(j, j) = G(i,i);
+                G(i, j) = A(j, i)/sqrt(A(i, i)^2 + A(j, i)^2);
+                G(j, i) = -A(j, i)/sqrt(A(i, i)^2 + A(j, i)^2);
                 Q = Q * G';
                 A = G * R;
                 R = A;
             end
         end
+        %___________Unnecessary___________%
+        zero_logic = triu(ones(m,n));
+        logic = (zero_logic == 0);
+        R(logic) = 0;
+        %___________Unnecessary___________%
     otherwise 
         fprintf("Error occured while entering method's name.");
 end
