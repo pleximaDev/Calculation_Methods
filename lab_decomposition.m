@@ -105,9 +105,12 @@ fprintf("_____________________\n")
 
 [my, p] = my_chol(A, "Cholesky_Banachiewicz")
 [standard] = chol(A, 'lower')
-
-
-
+asymmentric_matrix = [1.4, 1, 2; 1, 0.9, 1; 1, 1, 1.4]
+%%% Cholesky for asymmetric matrix %%%
+[L_asymm, ok] = my_chol(asymmentric_matrix, "Cholesky_Banachiewicz")
+B = L_asymm * conj(L_asymm)'
+%%%               //               %%%
+return
 
 [Q_std, R_std] = qr(A)
 [Q_classical, R] = my_qr(A, "Classical Gram_Schmidt")
@@ -300,7 +303,7 @@ switch method
         for i = 1 : 1 : n - 1
             for j = i + 1 : 1 : n
                 G = eye(n, n);
-                fprintf("ij(%d, %d)\n", i, j);
+%                 fprintf("ij(%d, %d)\n", i, j);
                 G(i, i) = A(i, i)/sqrt(A(i, i)^2 + A(j, i)^2);
                 G(j, j) = G(i,i);
                 G(i, j) = A(j, i)/sqrt(A(i, i)^2 + A(j, i)^2);
