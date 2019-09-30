@@ -310,6 +310,10 @@ switch method
                 R = A;
             end
         end
+        % <changing signs>
+        R = -R;
+        Q = -Q;
+        % <\changing signs>
         %___________Unnecessary___________%
         zero_logic = triu(ones(m,n));
         logic = (zero_logic == 0);
@@ -320,23 +324,7 @@ switch method
 end
 end
 
-%previous tries
 
-% function [Q,R] = my_modified_qr(x)
-% [m,n] = size(x);
-% Q = zeros(m,n);
-% R = zeros(m,n);
-% 
-% Q(:,1) = x(:, 1)/norm(x(:, 1));
-% for k = 2 : 1 : m
-%     Q(:,k - 1)
-%     b_k = Q(:,k - 1)/norm(Q(:,k - 1))
-%     proj = ((Q(:,k - 1)' * b_k)/(b_k'*b_k)).*b_k
-%     Q(:,k) = Q(:, k - 1) - proj;
-%     break
-%     Q(:,k) = -Q(:,k)/norm(Q(:,k));
-% end
-% end
 
 
 
