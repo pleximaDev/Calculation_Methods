@@ -110,6 +110,10 @@ asymmentric_matrix = [1.4, 1, 2; 1, 0.9, 1; 1, 1, 1.4]
 [L_asymm, ok] = my_chol(asymmentric_matrix, "Cholesky_Banachiewicz")
 B = L_asymm * conj(L_asymm)'
 %%%               //               %%%
+<<<<<<< HEAD
+=======
+return
+>>>>>>> cd51d35ae8ff99a404f88a9098d651cc59370e84
 
 [Q_std, R_std] = qr(A)
 [Q_classical, R] = my_qr(A, "Classical Gram_Schmidt")
