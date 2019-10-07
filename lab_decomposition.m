@@ -25,8 +25,6 @@ Q = V;
 L = D;
 Q_inv = Q^(-1);
 
-Ans = Q*Q_inv;
-Ans(Ans < 0.8) = 0;
 
 disp(A)
 B = Q * L * Q^(-1)
