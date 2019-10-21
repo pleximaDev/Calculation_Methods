@@ -120,10 +120,74 @@ for i = 1 : 1 : 4
     T(i, 5) = t * ok;
     X(:, 5, i) = x;
 end
-
+Temp = T
 %=========================================================================%
 
 
+N = 49
+T = zeros(4, 5);
+
+for i = 1 : 1 : 4
+    A = D{i}{1};
+    b = D{i}{2};
+    
+    Vector_tmp = 0;
+    for j = 1 : 1 : N
+        tic
+        [x, ok] = lab_slau_gauss(A, b);
+        if ~ok
+            break
+        end
+        Vector_tmp(j) = toc;
+    end
+    T(i, 1) = mean(Vector_tmp);
+    
+    
+    Vector_tmp = 0;
+    for j = 1 : 1 : N
+        tic
+        [x, ok] = lab_slau_gauss_jordan(A, b);
+        if ~ok
+            break
+        end
+        Vector_tmp(j) = toc;
+    end
+    T(i, 2) = mean(Vector_tmp);
+    
+    
+    Vector_tmp = 0;
+    for j = 1 : 1 : N
+        tic
+        [x, ok] = lab_slau_minv(A, b);
+        if ~ok
+            break
+        end
+        Vector_tmp(j) = toc;
+    end
+    T(i, 3) = mean(Vector_tmp);
+    
+    Vector_tmp = 0;
+    for j = 1 : 1 : N
+        tic
+        [x, ok] = lab_slau_Cramer(A, b);
+        if ~ok
+            break
+        end
+        Vector_tmp(j) = toc;
+    end
+    T(i, 4) = mean(Vector_tmp);
+    
+    Vector_tmp = 0;
+    for j = 1 : 1 : N
+        tic
+        [x, ok] = lab_slau_chol(A, b);
+        if ~ok
+            break
+        end
+        Vector_tmp(j) = toc;
+    end
+    T(i, 5) = mean(Vector_tmp);
+end
 
 
 
