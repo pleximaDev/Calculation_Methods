@@ -23,19 +23,21 @@ f1 = interp_function(omega, x1); % experimental data model
 [f3, x0] = linear_interpolation(f1, x1, x0)
 
 clf;
-subplot(1, 1, 1);
-stairs(x0, f2, 'LineWidth', 2);
+subplot(2, 1, 1);
+
 hold on;
 grid on;
 grid minor;
 
 % plot(x0, f4);
-stem(x1, f1, 'LineWidth', 2);
-plot(x0, f0, 'LineWidth', 2);
-plot(x0, f3, 'LineWidth', 2);
+plot(x0, f0, 'LineWidth', 1.5); 
+stem(x1, f1, 'LineWidth', 1.5);
+stairs(x0, f2, 'LineWidth', 1.5);
+plot(x0, f3, 'LineWidth', 1.5);
+
 
 title('Interpolation');
-legend('Nearest-neighbor interpolation','Linear interpolation','Experimental data model','Analytical model function');
+legend('Experimental data model','Analytical model function','Nearest-neighbor interpolation','Linear interpolation');
 legend('location','northeastoutside');
 ylabel('f(x)');
 xlabel('x');
@@ -80,15 +82,16 @@ end
 
 function [f, x0] = linear_interpolation(f1, x1, x0)
 k = 1;
-f = zeros(length(x0), 1)
+f = zeros(length(x0), 1);
 for i = 1 : 1 : length(x0)
     if x0(i) >= x1(k + 1) && k ~= length(x1) - 1
         k = k + 1;
     end
-    f = f1(k) + ((f1(k + 1) - f1(k))/(x1(k+1) - x1(k))) * x0(i) - x1(k);
+    f(i, 1) = f1(k) + ((f1(k + 1) - f1(k))/(x1(k + 1) - x1(k))) * (x0(i) - x1(k));
 end
 
 end
+
 
 
 
