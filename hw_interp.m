@@ -21,6 +21,8 @@ f1 = interp_function(omega, x1); % experimental data model
 
 [f2, x0] = nearest_neighbor(f1, x1, x0);
 [f3, x0] = linear_interpolation(f1, x1, x0)
+[f4, x0] = lagrange_polynomial(f1, x1, x0)
+[f5, x0] = Newton_polynomial(f1, x1, x0, N0, N1, 'forward')
 
 clf;
 subplot(2, 1, 1);
@@ -34,20 +36,20 @@ plot(x0, f0, 'LineWidth', 1.5);
 stem(x1, f1, 'LineWidth', 1.5);
 stairs(x0, f2, 'LineWidth', 1.5);
 plot(x0, f3, 'LineWidth', 1.5);
-
+plot(x0, f4, 'LineWidth', 1.5);
 
 title('Interpolation');
-legend('Experimental data model','Analytical model function','Nearest-neighbor interpolation','Linear interpolation');
+legend('Experimental data model','Analytical model function','Nearest-neighbor interpolation','Linear interpolation','Lagrange');
 legend('location','northeastoutside');
 ylabel('f(x)');
 xlabel('x');
 hold off;
 
-% subplot(2, 1, 2);
-% plot(x0, f5);
+subplot(2, 1, 2);
+plot(x0, f4);
 % hold on;
-% grid on;
-% grid minor;
+grid on;
+grid minor;
 % plot(x0, f6);
 % plot(x0, f7);
 % stem(x1, f1);
@@ -92,7 +94,106 @@ end
 
 end
 
+function [f, x0] = lagrange_polynomial(f1, x1, x0)
+f = zeros(length(x0), 1);
+shift = 1;
+for l = 1 : 1 : length(x0)
+    for k = 0 : 1 : length(x1) - shift
+        basis_polynomial = 1;
+        for i = 0 : 1 : length(x1) - shift
+            if(i ~= k)
+                fprintf("i == %d i+shift==%d , k == %d\n", i, (i + shift), k)
+                fprintf("\n");
+%                 i + shift
+                basis_polynomial = basis_polynomial * (x0(l) - x1(i + shift))/(x1(k + shift) - x1(i + shift));
+            end
+        end
+        f(l, 1) = f(l, 1) + basis_polynomial * f1(k + shift);
+        
+    end
+end
+end
 
+function [f, x0] = Newton_polynomial(f1, x1, x0, N0, N1, Newton)
+f = zeros(length(x0), 1);
+finite_diff = 0;
+switch Newton
+    case 'forward'
+        for i = 1 : 1 : N0-1
+            h = x1(i + 1) - x1(i);
+            q = (x0(i) - f1(i))/h;
+            n = length(x1);
+            for v = 0 : 1 : n
+                C = factorial(n)/(factorial(v) * factorial(n - v));
+                finite_diff = finite_diff + (-1)^v * f(i + n - v);
+            end
+            proizv = 1;
+            for k = 1 : 1 : n
+                proizv = proizv * (q - n + 1)/factorial(n);
+                f(i) = proizv * finite_diff;
+            end
+            
+            
+            
+%             finite_diff = f(i + 1) - f(i);
+%             finite_diff_2 = finite_diff(k+1) - finite_diff(k);
+            
+            
+        end
+        
+    case 'backward'
+        for p=1:1:N0
+        end
+end
+end
+
+
+% function [f, x0] = Newton_polynomial(f1, x1, x0, N0, N1, Newton)
+% f=zeros(N0, 1);
+% n= N1 - 1;
+% 
+% switch Newton
+%     case 'forward'
+%         for p=1:1:N0
+%             polNewton=f1(1);
+%             h = (x1(2)-x1(1));
+%             q=((x0(p)-x1(1))/h);
+%             for i=1:1:n
+%                 polNewton = polNewton + q(i)/factorial(i)*divided_difference(i, Newton, f1, 1);
+%                 h = (x1(2)-x1(1));
+%                 q(i+1)=q(i)*(((x0(p)-x1(1))/h)-(i+1)+1);
+%             end
+%             f(p, 1)=polNewton;
+%         end
+%     case 'backward'
+%         for p=1:1:N0
+%             polNewton=f1(n+1);  
+%             h = (x1(n+1)-x1(n));
+%             q=(x0(p)-x1(N1))/h;
+%             for i=1:1:n
+%                 polNewton=polNewton + q(i)/factorial(i)*divided_difference(i, Newton, f1, n+1);
+%                 h = (x1(n+1)-x1(n));
+%                 q(i+1)=q(i)*((x0(p)-x1(N1))/h+i+1-1);
+%             end
+%             f(p,1)=polNewton;
+%         end
+% end
+% 
+%     function y=divided_difference(n, Newton, f1, k)
+%     y=0;
+%     switch Newton
+%         case 'forward'
+%             for v=0:1:n
+%                 y=y+(-1)^(v)*(factorial(n)/(factorial(v)*factorial((n-v))))*f1(k+n-v);
+%             end
+%         case 'backward'
+%             for v=0:1:n
+%                 y=y+(-1)^(v)*(factorial(n)/(factorial(v)*factorial((n-v))))*f1(k-v);
+%             end
+%     end
+% 
+%     end
+% end
 
 
 
