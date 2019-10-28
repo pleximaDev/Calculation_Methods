@@ -36,7 +36,7 @@ grid on;
 grid minor;
 
 % plot(x0, f4);
-plot(x0, f0, 'LineWidth', 1.5); 
+stem(x0, f0, 'LineWidth', 1.5); 
 stem(x1, f1, 'LineWidth', 1.5);
 stairs(x0, f2, 'LineWidth', 1.5);
 plot(x0, f3, 'LineWidth', 1.5);
@@ -54,8 +54,11 @@ hold on
 plot(x0, f5, 'LineWidth', 1.5);
 plot(x0, f6, 'LineWidth', 1.5);
 plot(x0, f7, 'LineWidth', 1.5);
-plot(x0, f0, 'LineWidth', 1.5);
+stem(x0, f0, 'LineWidth', 1.5);
 stem(x1, f1, 'LineWidth', 1.5);
+
+stem(x0, f0, 'LineWidth', 1.5);
+
 % hold on;
 grid on;
 grid minor;
@@ -177,6 +180,12 @@ end
 function [f, x0] = Newton_polynomial_w(f1, x1, x0, Newton)
 f=zeros(length(x0), 1);
 n = length(x1) - 1;
+% finite_diff matrix here by one loop
+
+% for v = 1 : 1 : n
+%     C = factorial(N)/(factorial(v)*factorial(N - v));
+% 	finite_diff = finite_diff + (-1)^(v) * C *f1(1 + i - v);
+% end
 
 switch Newton
     case 'forward'
@@ -260,6 +269,7 @@ end
 % end
 
 function [f, x0] = cubic_spline(f1, x1, x0)
+% h as variable, not vector
 shift = 1;
 n = length(x1) - 1;
 f = zeros(length(x0), 1);
@@ -289,13 +299,16 @@ for k = 1 : 1 : n
 end
 
 k = 1;
-for i= 1 : 1 : length(x0)
+for i = 1 : 1 : length(x0)
+    
+    if(x0(i) > x1(k + 1))
+            k=k + 1;
+    end
+        
     h(k) = x0(i) - x1(k);
     f(i)=a(k) + b(k) * h(k) + c(k) * (h(k))^2 + d(k) * (h(k))^3;
     
-        if(x0(i) > x1(k + 1))
-            k=k + 1;
-        end
+        
 end 
 % k = 2;
 % for i = 1 : 1 : length(x0)
