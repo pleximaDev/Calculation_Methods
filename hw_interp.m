@@ -20,9 +20,9 @@ f0 = interp_function(omega, x0); % analytic function model
 f1 = interp_function(omega, x1); % experimental data model
 
 [f2, x0] = nearest_neighbor(f1, x1, x0);
-[f3, x0] = linear_interpolation(f1, x1, x0)
-[f4, x0] = lagrange_polynomial(f1, x1, x0)
-[f5, x0] = Newton_polynomial(f1, x1, x0, N0, N1, 'forward')
+[f3, x0] = linear_interpolation(f1, x1, x0);
+[f4, x0] = lagrange_polynomial(f1, x1, x0);
+[f5, x0] = Newton_polynomial(f1, x1, x0, 'forward');
 
 clf;
 subplot(2, 1, 1);
@@ -47,6 +47,7 @@ hold off;
 
 subplot(2, 1, 2);
 plot(x0, f4);
+plot(x0, f5);
 % hold on;
 grid on;
 grid minor;
@@ -114,31 +115,26 @@ for l = 1 : 1 : length(x0)
 end
 end
 
-function [f, x0] = Newton_polynomial(f1, x1, x0, N0, N1, Newton)
+function [f, x0] = Newton_polynomial(f1, x1, x0, Newton)
 f = zeros(length(x0), 1);
 finite_diff = 0;
 switch Newton
     case 'forward'
-        for i = 1 : 1 : N0-1
-            h = x1(i + 1) - x1(i);
-            q = (x0(i) - f1(i))/h;
-            n = length(x1);
-            for v = 0 : 1 : n
-                C = factorial(n)/(factorial(v) * factorial(n - v));
-                finite_diff = finite_diff + (-1)^v * f(i + n - v);
+        for i = 1 : 1 : length(x0)
+            Polynomial = f1(1);
+            h = x1(1 + 1) - x1(1);
+            q = (x0(i) - f1(1))/h;
+            n = length(x1) - 1;
+            for j = 1 : 1 : n
+                for v = 0 : 1 : j
+                    N = j;
+                    C = factorial(N)/(factorial(v) * factorial(N - v))
+                    finite_diff = finite_diff + (-1)^v * C * f1(1 + N - v)
+                end
+                Polynomial = Polynomial + (q - N + 1)/(factorial(N)) * finite_diff
             end
-            proizv = 1;
-            for k = 1 : 1 : n
-                proizv = proizv * (q - n + 1)/factorial(n);
-                f(i) = proizv * finite_diff;
-            end
             
-            
-            
-%             finite_diff = f(i + 1) - f(i);
-%             finite_diff_2 = finite_diff(k+1) - finite_diff(k);
-            
-            
+            f(i) = Polynomial;
         end
         
     case 'backward'
