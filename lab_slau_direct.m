@@ -23,7 +23,7 @@ x = [2.2873; 2.2162; 2.3068];
 %=========================================================================%
 % #3
 
-K = 4;
+K = 16;
 b = randn(K, 1);
 I = eye(K);
 
@@ -120,18 +120,18 @@ for i = 1 : 1 : 4
     T(i, 5) = t * ok;
     X(:, 5, i) = x;
 end
-Temp = T
+
 %=========================================================================%
 
 
-N = 49
+N = 1000;
 T = zeros(4, 5);
 
 for i = 1 : 1 : 4
     A = D{i}{1};
     b = D{i}{2};
     
-    Vector_tmp = 0;
+%     Vector_tmp = 0;
     for j = 1 : 1 : N
         tic
         [x, ok] = lab_slau_gauss(A, b);
@@ -140,10 +140,10 @@ for i = 1 : 1 : 4
         end
         Vector_tmp(j) = toc;
     end
-    T(i, 1) = mean(Vector_tmp);
+    T(i, 1) = mean(Vector_tmp * ok);
     
     
-    Vector_tmp = 0;
+%     Vector_tmp = 0;
     for j = 1 : 1 : N
         tic
         [x, ok] = lab_slau_gauss_jordan(A, b);
@@ -152,10 +152,10 @@ for i = 1 : 1 : 4
         end
         Vector_tmp(j) = toc;
     end
-    T(i, 2) = mean(Vector_tmp);
+    T(i, 2) = mean(Vector_tmp * ok);
     
     
-    Vector_tmp = 0;
+%     Vector_tmp = 0;
     for j = 1 : 1 : N
         tic
         [x, ok] = lab_slau_minv(A, b);
@@ -164,9 +164,9 @@ for i = 1 : 1 : 4
         end
         Vector_tmp(j) = toc;
     end
-    T(i, 3) = mean(Vector_tmp);
+    T(i, 3) = mean(Vector_tmp * ok);
     
-    Vector_tmp = 0;
+%     Vector_tmp = 0;
     for j = 1 : 1 : N
         tic
         [x, ok] = lab_slau_Cramer(A, b);
@@ -175,9 +175,9 @@ for i = 1 : 1 : 4
         end
         Vector_tmp(j) = toc;
     end
-    T(i, 4) = mean(Vector_tmp);
+    T(i, 4) = mean(Vector_tmp * ok);
     
-    Vector_tmp = 0;
+%     Vector_tmp = 0;
     for j = 1 : 1 : N
         tic
         [x, ok] = lab_slau_chol(A, b);
@@ -186,16 +186,57 @@ for i = 1 : 1 : 4
         end
         Vector_tmp(j) = toc;
     end
-    T(i, 5) = mean(Vector_tmp);
+    T(i, 5) = mean(Vector_tmp * ok);
 end
 
 
 
+for i = 1 : 1 : 4
+    Gauss = X(:, 1, i);
+    Gauss_Jordan = X(:, 2, i);
+    Cramer = X(:, 3, i);
+    Invertible_matrix = X(:, 4, i);
+    Cholesky = X(:, 5, i);
+    fprintf("%s\n\n", D{i}{3});
+    fprintf("A");
+    disp(D{i}{1});
+    fprintf("b");
+    disp(D{i}{2});
+    table(Gauss, Gauss_Jordan, Invertible_matrix, Cholesky);
+end
+% methods = ('Gauss','Gauss Jordan','Cramer','Invertible matrix','Cholesky');
+
+
+clf;
+subplot(1,2,1);
+bar(T')
+title('Direct methods')
+ylabel('Time, ms');
+xlabel('Methods');
+ax = gca;
+ax.XTickLabel={'Gauss','Gauss-Jordan',' Cramer',' Inverse ',' Cholesky'};
+grid on
+grid minor
+legend({'A>0, Symmetric','A<0, Symmetric','A non-symmetric randn','A<0, Sparse'},'location','northeastoutside');
+
+
+T(4, :) = [];
+
+
+subplot(1,2,2);
+bar(T')
+title('Direct methods')
+ylabel('Time, ms');
+xlabel('Methods');
+ax = gca;
+ax.XTickLabel={'Gauss','Gauss-Jordan',' Cramer',' Inverse ',' Cholesky'};
+grid on
+grid minor
+legend({'A>0, Symmetric','A<0, Symmetric','A non-semmytric randn'},'location','northeastoutside');
 
 
 
-
-
+%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++%
 function [x, ok] = lab_slau_gauss(A, b)
 ok = false;
 [m, n] = size(A);
@@ -208,9 +249,9 @@ end
 if ok 
     for i = 1 : 1 : n
         for k = i + 1 : 1 : m
-            coefficient = (A(k, i)/A(i, i));
-            A(k, :) = A(k, :) - A(i, :) * coefficient;
-            b(k) = b(k) - b(i) * coefficient;
+        coefficient = (A(k, i)/A(i, i));
+        A(k, :) = A(k, :) - A(i, :) * coefficient;
+        b(k) = b(k) - b(i) * coefficient;
         end
     end
     for i = n : -1 : 1
@@ -236,16 +277,16 @@ end
 if ok
     for i = 1 : 1 : n
         for k = i + 1 : 1 : n
-            C(k, :) = C(k, :) - C(i, :) * (C(k, i)/C(i, i));
+        C(k, :) = C(k, :) - C(i, :) * (C(k, i)/C(i, i));
         end
     end
     for i = n : -1 : 1
         for k = i - 1 : -1 : 1
-            C(k, :) = C(k, :) - C(i, :) * (C(k, i)/C(i, i));
+        C(k, :) = C(k, :) - C(i, :) * (C(k, i)/C(i, i));
         end
     end
     for t = 1 : 1 : m
-        x(t) = C(t, m + 1)/C(t, t);
+    x(t) = C(t, m + 1)/C(t, t);
     end
     
 end
@@ -309,13 +350,13 @@ if (all(eigs(A, m) > 1e-12))
 end
 
 if ok 
+    L = zeros(m, n);
     L(1, 1) = (A(1, 1))^(1/2);
     for i = 2 : 1 : m
         for j = 1 : 1 : i
            for k = 1 : 1 : j - 1
                sumij = sumij + L(i, k) * L(j, k);
            end
-
            L(i,j) = (1/L(j,j))*(A(i,j) - sumij);
            sumij = 0;
            sumii = 0;
@@ -325,8 +366,25 @@ if ok
         end
         L(i,i) = (A(i,i) - sumii)^(1/2);
     end
-    y = L^(-1) * b;
-    x = (L^(-1))' * y;
+    
+    
+    for i = 1 : 1 : n
+        sum = 0;
+        for k = 1 : 1 : i - 1
+            sum = sum + L(i, k) * y(k);
+        end
+        y(i) = (b(i) - sum)/L(i, i);
+    end
+    for i = n : -1 : 1
+        sum = 0;
+        for k = i + 1 : 1 : n
+            sum = sum + L(k, i) * x(k);
+        end
+        x(i) = (y(i) - sum)/L(i, i);
+    end
+    
+%     y = L^(-1) * b;
+%     x = (L^(-1))' * y;
 end
 end
 
