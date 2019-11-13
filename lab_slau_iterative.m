@@ -238,6 +238,40 @@ end
 
 
 
+figure('Name', 'Measured Data', 'NumberTitle', 'off');
+clf;
+subplot(2,1,1);
+bar(T')
+title('Iterative methods')
+ylabel('Time, ms');
+xlabel('Methods');
+ax = gca;
+
+ax.XTickLabel={'Jacobi', 'Gauss-Seidel', 'Successive over-relaxation', ...
+'Conjugate gradient', 'Biconjugate gradient', 'Stabilized biconjugate gradient'};
+grid on
+grid minor
+legend({'A>0, Symmetric','A<0, Symmetric','A non-symmetric randn','A<0, Sparse'},'location','northeastoutside');
+
+
+%--------------------
+%-----iterations-----
+subplot(2, 1, 2);
+bar(squeeze(K))
+grid on
+grid minor
+ylabel('Iterations, k');
+xlabel('Methods');
+ax = gca;
+ax.XTickLabel={'Jacobi', 'Gauss-Seidel', 'Successive over-relaxation', ...
+'Conjugate gradient', 'Biconjugate gradient', 'Stabilized biconjugate gradient'};
+legend({'A>0, Symmetric','A<0, Symmetric','A non-symmetric randn','A<0, Sparse'},'location','northeastoutside');
+%--------------------
+%--------------------
+
+
+
+
 
 
 function [x, ok, k] = lab_slau_jacobi(A, b, x0, eps, Kmax)
