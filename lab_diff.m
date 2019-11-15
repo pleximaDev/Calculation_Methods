@@ -8,11 +8,89 @@ fnc = @(t) lab_diff_f(t);
 % d - derivative order
 % p - finite diff order
 % [A, C, b, divider] = C_coeff(d, p, method)
+% divider of whole finite diff == 1/divider * (factorial(d)/1)
+
+[A, C, b, divider, d, p] = C_coeff(3, 4, "forward")
+
+[A, C, b, divider, d, p] = C_coeff(3, 4, "centered")
+% C = C(end:-1:1)
+% 1/8
+clc
+[A, C, b, divider, d, p] = C_coeff(1, 6, "forward")
+
+[str] = str_finite_diff(C, d, p, divider)
+
+A * C
 
 
-[A, C, b, divider] = C_coeff(3, 1, "forward")
-[A, C, b, divider] = C_coeff(3, 2, "centered")
 
+
+
+
+figure(1)
+clf
+
+%{
+eqtext = '$$F_n={1 \over \sqrt{5}}';
+eqtext = [eqtext '\left[\left({1+\sqrt{5}\over 2}\right)^n -'];
+eqtext = [eqtext '\left({1-\sqrt{5}\over 2}\right)^n\right]$$'];
+
+
+fib = zeros(1, 12);
+for i = 1:12
+    fib(i) = (((1+sqrt(5))/2)^i - ((1-sqrt(5))/2)^i)/sqrt(5);
+end
+subplot(2, 1, 1)
+plot(1:12, fib, 'k^-')
+text(0.5, 125, eqtext, 'Interpreter', 'Latex', 'Fontsize', 16)
+%}
+
+% subplot(1,1, 1)
+% plot([0, 4], [1, 1])
+plot(1, 1)
+ylim([0, 3])
+xlim([0, 8])
+text(0.5, 1.5, str, 'Interpreter', 'Latex', 'Fontsize', 16)
+
+function [str] = str_finite_diff(C, d, p, divider)
+
+start = ['$$F^' int2str(d) '(x) = ']
+
+if(abs(C(1)) ~= 1)
+    str = ['{ ' int2str(C(1)) ' * F(x) + '];
+else
+    str = ['{F(x) + '];
+end
+str = [str int2str(C(2)) ' * F(x + h) + '];
+for i = 3 : 1 : size(C, 1)
+    if(C(i) < -1e-11)
+        str(end-1:end) = [];
+%     elseif(abs(C(i)) == 1)
+%         str = [str 'F(x) + ']
+%         break;
+    end
+    if(C(i) > 1e-11 || C(i) < -1e-11)
+        if(abs(C(i)) ~= 1)
+            str = [str int2str(C(i)) ' * F(x + ' int2str(i) - 1 ' * h) + '];
+        elseif(C(i) == 1)
+            str = [str ' F(x + ' int2str(i) - 1 ' * h) + '];
+        else
+            str = [str ' - F(x + ' int2str(i) - 1 ' * h) + '];
+            
+        end
+    end
+end
+str(end-1:end) = []
+if(d >= 1)
+    str= [str '\over' int2str(divider) ' * h^' int2str(d) '}']
+else
+    str = [str '\over' int2str(divider) '}']
+end
+
+str = [str '$$']
+start = [start str]
+str = start
+end
 
 
 function [f] = lab_diff_f(t)
@@ -79,7 +157,7 @@ end
 
 end
 
-function [A, C, b, divider] = C_coeff(d, p, method)
+function [A, C, b, divider, d, p] = C_coeff(d, p, method)
 format rat;
 switch method
     case "forward"
@@ -91,10 +169,10 @@ switch method
             A(t, :) =  [(i_min : i_max).^i(t)];
         end
         b = zeros(n, 1);
-        b(d+1) = 1;
+        b(d + 1) = 1;
         C = linsolve(A, b);
         [N, D] = rat(C)
-        divider = max(D);
+        divider = max(D)
         C = C * divider;
         
 %         A = [(i_min : i_max).^0; (i_min : i_max).^1; (i_min : i_max).^2; (i_min : i_max).^3]
@@ -108,21 +186,21 @@ switch method
             A(t, :) =  [(i_min : i_max).^i(t)];
         end
         b = zeros(n, 1);
-        b(d+1) = 1;
+        b(d + 1) = 1;
         C = linsolve(A, b);
-        [N, D] = rat(C)
+        [N, D] = rat(C);
         divider = max(D);
         C = C * divider;
     case "centered"
-        i_min = -(d + p - 1)/2; % i_max = -i_min
-        i_max = (d + p - 1)/2;
+        i_min = -fix((d + p - 1)/2); % i_max = -i_min
+        i_max = fix((d + p - 1)/2);
         n = size(i_min : 1 : i_max, 2);
         i = (0 : 1 : n);
         for t = 1 : 1 : n
             A(t, :) =  [(i_min : 1 : i_max).^i(t)];
         end
         b = zeros(n, 1);
-        b(d+1) = 1;
+        b(d + 1) = 1;
         C = linsolve(A, b);
         C = linsolve(A, b);
         [N, D] = rat(C);
