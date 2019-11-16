@@ -16,9 +16,9 @@ fnc = @(t) lab_diff_f(t);
 % C = C(end:-1:1)
 % 1/8
 clc
-[A, C, b, divider, d, p] = C_coeff(1, 6, "forward")
+[A, C, b, divider, d, p] = C_coeff(1, 4, "backward")
 
-[str] = str_finite_diff(C, d, p, divider)
+[str] = str_finite_diff(C, d, p, divider, "backward")
 
 A * C
 
@@ -27,8 +27,6 @@ A * C
 
 
 
-figure(1)
-clf
 
 %{
 eqtext = '$$F_n={1 \over \sqrt{5}}';
@@ -47,49 +45,112 @@ text(0.5, 125, eqtext, 'Interpreter', 'Latex', 'Fontsize', 16)
 
 % subplot(1,1, 1)
 % plot([0, 4], [1, 1])
-plot(1, 1)
-ylim([0, 3])
-xlim([0, 8])
+
+
+
+function [str] = str_finite_diff(C, d, p, divider, method)
+
+switch method
+    case "forward"
+        if (d ~= 1)
+            start = ['$$F^' int2str(d) '(x) = '];
+        else
+            start = ['$$F(x) = '];
+        end
+        if(abs(C(1)) ~= 1)
+            str = ['{ ' int2str(C(1)) ' * F(x) + '];
+        else
+            str = ['{F(x) +'];
+        end
+        
+        if(C(2) > 0)
+            str = [str int2str(C(2)) ' * F(x + h) + '];
+        elseif (C(2) < 0)
+            str(end-1:end) = [];
+            str = [str int2str(C(2)) ' * F(x + h) + '];
+        end
+        for i = 3 : 1 : size(C, 1)
+            if(C(i) < -1e-11)
+                str(end-1:end) = [];
+            end
+            if(C(i) > 1e-11 || C(i) < -1e-11)
+                if(abs(C(i)) ~= 1)
+                    str = [str int2str(C(i)) ' * F(x + ' int2str(i) - 1 ' * h) + '];
+                elseif(C(i) == 1)
+                    str = [str ' F(x + ' int2str(i) - 1 ' * h) + '];
+                else
+                    str = [str ' - F(x + ' int2str(i) - 1 ' * h) + '];
+                end
+            end
+        end
+        str(end-1:end) = [];
+        if(d >= 1)
+            str= [str '\over' int2str(divider) ' * h^' int2str(d) '}']
+        else
+            str = [str '\over' int2str(divider) '}']
+        end
+        str = [str '$$'];
+        start = [start str];
+        str = start;
+        
+    case "backward"
+        C = C(end:-1:1)
+        if (d ~= 1)
+            start = ['$$F^' int2str(d) '(x) = '];
+        else
+            start = ['$$F(x) = '];
+        end
+        if(abs(C(1)) ~= 1)
+            str = ['{ ' int2str(C(1)) ' * F(x) + '];
+        else
+            str = ['{F(x) +'];
+        end
+        
+        if(C(2) > 0)
+            str = [str int2str(C(2)) ' * F(x - h) + '];
+        elseif (C(2) < 0)
+            str(end-1:end) = [];
+            str = [str int2str(C(2)) ' * F(x - h) + '];
+        end
+        for i = 3 : 1 : size(C, 1)
+            if(C(i) < -1e-11)
+                str(end-1:end) = [];
+            end
+            if(C(i) > 1e-11 || C(i) < -1e-11)
+                if(abs(C(i)) ~= 1)
+                    str = [str int2str(C(i)) ' * F(x - ' int2str(i) - 1 ' * h) + '];
+                elseif(C(i) == 1)
+                    str = [str ' F(x - ' int2str(i) - 1 ' * h) + '];
+                else
+                    str = [str ' - F(x - ' int2str(i) - 1 ' * h) + '];
+                end
+            end
+        end
+        str(end-1:end) = [];
+        if(d >= 1)
+            if(d == 1)
+                str = [str '\over' int2str(divider) ' * h}'];
+            else
+                str = [str '\over' int2str(divider) ' * h^' int2str(d) '}'];
+            end
+        else
+            str = [str '\over' int2str(divider) '}'];
+        end
+        str = [str '$$'];
+        start = [start str];
+        str = start;
+    case "centered"
+end
+figure('Name', 'Approximation of derivative', 'NumberTitle', 'off', ...
+    'Position', [200 300 1100 300]) % [left bottom width height]
+clf
+plot(1, 1);
+title([int2str(d) ' order derivative approximated by ' int2str(p) ...
+    ' order ' char(method) ' finite difference'])
+ylim([0, 3]);
+xlim([0, 8]);
 text(0.5, 1.5, str, 'Interpreter', 'Latex', 'Fontsize', 16)
 
-function [str] = str_finite_diff(C, d, p, divider)
-
-start = ['$$F^' int2str(d) '(x) = ']
-
-if(abs(C(1)) ~= 1)
-    str = ['{ ' int2str(C(1)) ' * F(x) + '];
-else
-    str = ['{F(x) + '];
-end
-str = [str int2str(C(2)) ' * F(x + h) + '];
-for i = 3 : 1 : size(C, 1)
-    if(C(i) < -1e-11)
-        str(end-1:end) = [];
-%     elseif(abs(C(i)) == 1)
-%         str = [str 'F(x) + ']
-%         break;
-    end
-    if(C(i) > 1e-11 || C(i) < -1e-11)
-        if(abs(C(i)) ~= 1)
-            str = [str int2str(C(i)) ' * F(x + ' int2str(i) - 1 ' * h) + '];
-        elseif(C(i) == 1)
-            str = [str ' F(x + ' int2str(i) - 1 ' * h) + '];
-        else
-            str = [str ' - F(x + ' int2str(i) - 1 ' * h) + '];
-            
-        end
-    end
-end
-str(end-1:end) = []
-if(d >= 1)
-    str= [str '\over' int2str(divider) ' * h^' int2str(d) '}']
-else
-    str = [str '\over' int2str(divider) '}']
-end
-
-str = [str '$$']
-start = [start str]
-str = start
 end
 
 
@@ -171,10 +232,9 @@ switch method
         b = zeros(n, 1);
         b(d + 1) = 1;
         C = linsolve(A, b);
-        [N, D] = rat(C)
-        divider = max(D)
+        [N, D] = rat(C);
+        divider = max(D);
         C = C * divider;
-        
 %         A = [(i_min : i_max).^0; (i_min : i_max).^1; (i_min : i_max).^2; (i_min : i_max).^3]
 
     case "backward"
