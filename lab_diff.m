@@ -23,8 +23,8 @@ C_str = rats(C)
 
 % rats(num2str(C(1)))
 clc
-[A, C, b, divider, d, p] = C_coeff(4, 1, "forward")
-[str] = str_finite_diff(C, d, p, divider, "forward")
+[A, C, b, divider, d, p] = C_coeff(1, 4, "centered")
+[str] = str_finite_diff(C, d, p, divider, "centered")
 
 % C_str(isspace(C_str))
 % A * C 
@@ -254,6 +254,70 @@ switch method
         start = [start str];
         str = start;
     case "centered"
+        if (d ~= 1)
+            start = ['$$F^' int2str(d) '(x) = '];
+        else
+            start = ['$$F(x) = '];
+        end
+        str = '{';
+        fix(size(C, 1)/2)
+        i = 1;
+        for j = -fix(size(C, 1)/2) : 1 : fix(size(C, 1)/2)
+            if(C(i) > 1e-11 || C(i) < -1e-11)
+                if (j < 0)
+                    if(abs(C(i)) ~= 1)
+                        str = [str C(i) ' * F(x - ' int2str(j) ' * h) + '];
+    %                         str = [str int2str(C(i)) ' * F(x - ' int2str(i) - 1 ' * h) + '];
+                    elseif(C(i) == 1)
+                        str = [str ' F(x - ' int2str(j) ' * h) + '];
+                    else
+                        str = [str ' - F(x - ' int2str(j) ' * h) + '];
+                    end
+                elseif(j < 0)
+                    if(abs(C(i)) ~= 1)
+                        str = [str C(i) ' * F(x + ' int2str(j) ' * h) + '];
+    %                         str = [str int2str(C(i)) ' * F(x - ' int2str(i) - 1 ' * h) + '];
+                    elseif(C(i) == 1)
+                        str = [str ' F(x + ' int2str(j) ' * h) + '];
+                    else
+                        str = [str ' - F(x + ' int2str(j) ' * h) + '];
+                    end
+                else
+                    if(abs(C(i)) ~= 1)
+                        str = [str C(i) ' * F(x) + '];
+    %                         str = [str int2str(C(i)) ' * F(x - ' int2str(i) - 1 ' * h) + '];
+                    elseif(C(i) == 1)
+                        str = [str ' F(x) + '];
+                    else
+                        str = [str ' - F(x) + '];
+                    end
+                end
+                
+            end
+            i = i + 1;
+        end
+        str(end-1:end) = [];
+        if(d >= 1)
+            if(d == 1)
+                if(p < 6)
+                    str = [str '\over' int2str(divider) ' * h}'];
+%                 else
+%                     str = [str '\over h}'];
+                end
+            else
+                if(p < 6)
+                    str = [str '\over' int2str(factorial(d)/divider) ' * h^' int2str(d) '}'];
+%                 else
+%                     str = [str '\over h^' int2str(d) '}'];
+                end
+            end
+        end
+        str = [str '$$'];
+        start = [start str];
+        str = start;
+        
+        
+        
 end
 figure('Name', 'Approximation of derivative', 'NumberTitle', 'off', ...
     'Position', [200 300 1400 300]); % [left bottom width height]
