@@ -126,9 +126,9 @@ error(2, 3) = mean(abs(~isnan(finite_diff_df(:, 2, 3)) - df')./abs(df)');
 error(3, 3) = mean(abs(~isnan(finite_diff_df(:, 3, 3)) - df')./abs(df)');
 
 % 6 order
-error(1, 4) = mean(abs(~isnan(finite_diff_df(:, 1, 4)) - df')./df');
-error(2, 4) = mean(abs(~isnan(finite_diff_df(:, 2, 4)) - df')./df');
-error(3, 4) = mean(abs(~isnan(finite_diff_df(:, 3, 4)) - df')./df');
+error(1, 4) = mean(abs(~isnan(finite_diff_df(:, 1, 4)) - df')./abs(df)');
+error(2, 4) = mean(abs(~isnan(finite_diff_df(:, 2, 4)) - df')./abs(df)');
+error(3, 4) = mean(abs(~isnan(finite_diff_df(:, 3, 4)) - df')./abs(df)');
 
 %==========================bar==========================
 figure('Name', 'Error for n = 20','Numbertitle', 'off')
