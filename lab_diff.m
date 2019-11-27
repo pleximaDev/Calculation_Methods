@@ -308,26 +308,26 @@ switch k
                     for i = 1 : 1 : length(t)
                         df(i) = (fnc(t(i) + h) - fnc(t(i)))/h;
                     end
-                case "backward"
+                case 'backward'
                     for i = 1 : 1 : length(t)
                         df(i) = (fnc(t(i)) - fnc(t(i) - h))/h;
                     end
-                case "central"
+                case 'central'
                     % Nope
                 otherwise
                     fprintf("Error occured while entering method's name.");
         end
     case 2
         switch method
-            case "forward"
+            case 'forward'
                 for i = 1 : 1 : length(t) - 2
                     df(i) = ( -fnc(t(i) + 2*h) + 4 * fnc(t(i) + h) - 3 * fnc(t(i)))/(2 * h);
                 end
-            case "backward"
+            case 'backward'
                 for i = 1 + 2 : 1 : length(t)
                     df(i) = ( 3 * fnc(t(i)) - 4 * fnc(t(i) - h) + fnc(t(i) - 2*h))/(2 * h);
                 end
-            case "central"
+            case 'central'
                 for i = 1 + 1  : 1 : length(t) - 1
                     df(i) = (fnc(t(i) + h) - fnc(t(i) - h))/(2 * h);
                 end
@@ -336,15 +336,15 @@ switch k
         end
     case 4
         switch method
-            case "forward"
+            case 'forward'
                 for i = 1 : 1 : length(t) - 4
                     df(i) = ((-3) * fnc(t(i) + 4*h) + 16 * fnc(t(i) + 3*h) - 36 * fnc(t(i) + 2*h) + 48 * fnc(t(i) + h) - 25 * fnc(t(i)))/(12 * h);
                 end
-            case "backward"
+            case 'backward'
                 for i = 1 + 4 : 1 : length(t)
                     df(i) = (25 * fnc(t(i)) - 48 * fnc(t(i) - h) + 36 * fnc(t(i) - 2 * h) - 16 * fnc(t(i) - 3 * h) + 3 * fnc(t(i) - 4 * h))/(12*h);
                 end
-            case "central"
+            case 'central'
                 for i = 1 + 2 : 1 : length(t) - 2
                     df(i) = (-fnc(t(i) + 2*h) + 8 * fnc(t(i) + h) - 8 * fnc(t(i) - h) + fnc(t(i) - 2 * h))/(12 * h);
                 end
@@ -353,15 +353,15 @@ switch k
         end
     case 6
         switch method
-            case "forward"
+            case 'forward'
                 for i = 1 : 1 : length(t) - 6
                     df(i) = ((-1/6) * fnc(t(i) + 6*h) + (6/5) * fnc(t(i) + 5*h) - (15/4) * fnc(t(i) + 4*h) + (20/3) * fnc(t(i) + 3*h) - (15/2) * fnc(t(i) + 2*h) + 6 * fnc(t(i) + 1 * h) -(49/20)* fnc(t(i)))/h;
                 end
-            case "backward"
+            case 'backward'
                 for i = 1 + 6 : 1 : length(t)
                   df(i) = ((49/20) * fnc(t(i)) - 6 * fnc(t(i) - h) + (15/2) * fnc(t(i) - 2 * h) + (-20/3) * fnc(t(i) - 3 * h) + (15/4) * fnc(t(i) - 4 * h) - (6/5) * fnc(t(i) - 5 * h) + (1/6)* fnc(t(i) - 6 * h))/h;
                 end
-            case "central"
+            case 'central'
                 for i = 1 + 3 : 1 : length(t) - 3
                     df(i) = ((-1/60) * fnc(t(i) - 3*h) + (3/20)*fnc(t(i) - 2*h) - (3/4) * fnc(t(i) - h) + ...
                      (3/4)* fnc(t(i) + h) + (-3/20)* fnc(t(i) + 2*h) + (1/60) * fnc(t(i) + 3*h))/h;
