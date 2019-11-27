@@ -236,6 +236,34 @@ hold off;
 
 
 
+
+
+
+
+
+% 1 order
+error(1, 1) = mean(abs(~isnan(finite_diff_df_1000(:, 1, 1)) - df')./abs(df)');
+error(2, 1) = mean(abs(~isnan(finite_diff_df_1000(:, 2, 1)) - df')./abs(df)');
+error(3, 1) = 0;
+
+% 2 order
+error(1, 2) = mean(abs(~isnan(finite_diff_df_1000(:, 1, 2)) - df')./abs(df)');
+error(2, 2) = mean(abs(~isnan(finite_diff_df_1000(:, 2, 2)) - df')./abs(df)');
+error(3, 2) = mean(abs(~isnan(finite_diff_df_1000(:, 3, 2)) - df')./abs(df)');
+
+% 4 order
+error(1, 3) = mean(abs(~isnan(finite_diff_df_1000(:, 1, 3)) - df')./abs(df)');
+error(2, 3) = mean(abs(~isnan(finite_diff_df_1000(:, 2, 3)) - df')./abs(df)');
+error(3, 3) = mean(abs(~isnan(finite_diff_df_1000(:, 3, 3)) - df')./abs(df)');
+
+% 6 order
+error(1, 4) = mean(abs(~isnan(finite_diff_df_1000(:, 1, 4)) - df')./abs(df)');
+error(2, 4) = mean(abs(~isnan(finite_diff_df_1000(:, 2, 4)) - df')./abs(df)');
+error(3, 4) = mean(abs(~isnan(finite_diff_df_1000(:, 3, 4)) - df')./abs(df)');
+
+
+
+
 %==========================bar==========================
 figure('Name', 'Error for n = 1000','Numbertitle', 'off')
 clf
